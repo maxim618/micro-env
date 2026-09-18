@@ -1,12 +1,15 @@
 package dev.maxim.microenv;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MicroEnvConfigParser {
 
     public List<MicroEnvConfigEntry> parse(String content) {
         List<MicroEnvConfigEntry> entries = new ArrayList<>();
+        Set<String> keys = new HashSet<>();
 
         int lineNumber = 0;
         for (String rawLine : content.split("\\R")) {
@@ -37,6 +40,12 @@ public class MicroEnvConfigParser {
             if (value.isEmpty()) {
                 throw new IllegalArgumentException(
                         "Configuration value is empty at line " + lineNumber
+                );
+            }
+
+            if (!keys.add(key)) {
+                throw new IllegalArgumentException(
+                        "Duplicate configuration key at line " + lineNumber + ": " + key
                 );
             }
 
