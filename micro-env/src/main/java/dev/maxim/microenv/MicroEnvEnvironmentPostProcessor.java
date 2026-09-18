@@ -8,10 +8,14 @@ import java.util.Map;
 
 public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
+    private final MicroEnvManifestReader manifestReader = new MicroEnvManifestReader();
+
     @Override
     public void postProcessEnvironment(
             ConfigurableEnvironment environment,
             org.springframework.boot.SpringApplication application) {
+
+        manifestReader.readDefaultManifest();
 
         Map<String, Object> properties = Map.of(
                 "micro-env.poc", "loaded"
