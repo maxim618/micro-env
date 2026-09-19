@@ -7,6 +7,8 @@ import org.springframework.core.env.MapPropertySource;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,7 +36,7 @@ public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcesso
 
         try {
             List<Path> paths = entryReader.resolveEntries(manifest.get());
-            Map<String, String> properties = configLoader.load(paths);
+            Map<String, Object> properties = new LinkedHashMap<>(configLoader.load(paths));
 
             environment.getPropertySources().addFirst(
                     new MapPropertySource(PROPERTY_SOURCE_NAME, properties)
