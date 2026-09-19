@@ -44,7 +44,7 @@ public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcesso
         } catch (IOException | IllegalArgumentException e) {
             LOGGER.log(
                     System.Logger.Level.WARNING,
-                    "Failed to load micro-env configuration",
+                    "Failed to load micro-env configuration: configuration loading was not completed; no properties were applied",
                     e
             );
         }
