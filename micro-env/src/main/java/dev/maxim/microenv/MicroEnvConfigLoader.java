@@ -4,33 +4,32 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MicroEnvConfigLoader {
 
     private final MicroEnvConfigSourceValidator sourceValidator;
     private final MicroEnvConfigFileReader fileReader;
-    private final MicroEnvConfigMerger merger;
+    private final MicroEnvConfigParser parser;
 
     public MicroEnvConfigLoader() {
         this(
                 new MicroEnvConfigSourceValidator(),
                 new MicroEnvConfigFileReader(),
-                new MicroEnvConfigMerger()
+                new MicroEnvConfigParser()
         );
     }
 
     MicroEnvConfigLoader(
             MicroEnvConfigSourceValidator sourceValidator,
             MicroEnvConfigFileReader fileReader,
-            MicroEnvConfigMerger merger
+            MicroEnvConfigParser parser
     ) {
         this.sourceValidator = sourceValidator;
         this.fileReader = fileReader;
-        this.merger = merger;
+        this.parser = parser;
     }
 
-    public Map<String, String> load(List<Path> paths) throws IOException {
+    public List<MicroEnvConfig> load(List<Path> paths) throws IOException {
         sourceValidator.validate(paths);
 
         List<MicroEnvConfigFile> files = new ArrayList<>(paths.size());
@@ -38,6 +37,14 @@ public class MicroEnvConfigLoader {
             files.add(fileReader.read(path));
         }
 
-        return merger.merge(files);
+        List<MicroEnvConfig> configs = new ArrayList<>(files.size());
+        for (MicroEnvConfigFile file : files) {
+            configs.add(new MicroEnvConfig(
+                    file.path(),
+                    parser.parse(file.content())
+            ));
+        }
+
+        return List.copyOf(configs);
     }
 }
