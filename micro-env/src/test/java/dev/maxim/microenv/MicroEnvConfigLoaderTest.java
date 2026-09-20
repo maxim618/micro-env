@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,16 +19,77 @@ class MicroEnvConfigLoaderTest {
     private final MicroEnvConfigLoader loader = new MicroEnvConfigLoader();
 
     @Test
-    void loadsAllConfigurationFilesBeforeReturningResult() throws IOException {
-        Path common = writeFile("common.env", "COMMON=common-value");
-        Path local = writeFile("local.env", "LOCAL=local-value");
+    void loadsEachConfigurationFileAsSeparateResult() throws IOException {
+        Path common = writeFile(
+                "common.env",
+                """
+                COMMON=common-value
+                FIRST=first-value
+                """
+        );
+        Path local = writeFile(
+                "local.env",
+                """
+                SECOND=second-value
+                """
+        );
+
+        List<MicroEnvConfig> result = loader.load(List.of(common, local));
+
+        assertEquals(2, result.size());
+
+        assertEquals(common, result.get(0).path());
+        assertEquals(
+                List.of(
+                        new MicroEnvConfigEntry("COMMON", "common-value"),
+                        new MicroEnvConfigEntry("FIRST", "first-value")
+                ),
+                result.get(0).entries()
+        );
+
+        assertEquals(local, result.get(1).path());
+        assertEquals(
+                List.of(
+                        new MicroEnvConfigEntry("SECOND", "second-value")
+                ),
+                result.get(1).entries()
+        );
+    }
+
+    @Test
+    void preservesInputFileOrder() throws IOException {
+        Path first = writeFile("first.env", "VALUE=from-first");
+        Path second = writeFile("second.env", "VALUE=from-second");
+
+        List<MicroEnvConfig> result = loader.load(List.of(first, second));
 
         assertEquals(
-                Map.of(
-                        "COMMON", "common-value",
-                        "LOCAL", "local-value"
+                List.of(first, second),
+                result.stream()
+                        .map(MicroEnvConfig::path)
+                        .toList()
+        );
+    }
+
+    @Test
+    void preservesSameKeyFromDifferentFiles() throws IOException {
+        Path common = writeFile("common.env", "SHARED=from-common");
+        Path local = writeFile("local.env", "SHARED=from-local");
+
+        List<MicroEnvConfig> result = loader.load(List.of(common, local));
+
+        assertEquals(
+                List.of(
+                        new MicroEnvConfigEntry("SHARED", "from-common")
                 ),
-                loader.load(List.of(common, local))
+                result.get(0).entries()
+        );
+
+        assertEquals(
+                List.of(
+                        new MicroEnvConfigEntry("SHARED", "from-local")
+                ),
+                result.get(1).entries()
         );
     }
 
