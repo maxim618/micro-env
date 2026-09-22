@@ -1,7 +1,9 @@
 package dev.maxim.microenv;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
@@ -10,19 +12,36 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MicroEnvEnvironmentPostProcessorTest {
 
     @TempDir
     Path tempDir;
 
-    private final MicroEnvEnvironmentPostProcessor postProcessor =
-            new MicroEnvEnvironmentPostProcessor();
+    private MicroEnvEnvironmentPostProcessor postProcessor;
+
+    @BeforeEach
+    void setUp() {
+        MicroEnvManifestReader manifestReader =
+                new MicroEnvManifestReader() {
+                    @Override
+                    public Optional<MicroEnvManifest> readDefaultManifest(
+                            SpringApplication application) {
+                        return readManifestFrom(tempDir);
+                    }
+                };
+
+        postProcessor = new MicroEnvEnvironmentPostProcessor(
+                manifestReader,
+                new MicroEnvManifestEntryReader(),
+                new MicroEnvConfigLoader()
+        );
+    }
 
     @Test
     void appliesConfigurationFromSingleFile() throws IOException {
@@ -31,8 +50,7 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         assertEquals("from-file", environment.getProperty("DEMO_VALUE"));
     }
@@ -49,8 +67,7 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         List<String> microEnvSources = environment.getPropertySources()
                 .stream()
@@ -73,8 +90,7 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         assertEquals("from-local", environment.getProperty("DEMO_VALUE"));
     }
@@ -91,8 +107,7 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         List<PropertySource<?>> microEnvSources = environment.getPropertySources()
                 .stream()
@@ -122,15 +137,19 @@ class MicroEnvEnvironmentPostProcessorTest {
                 StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME,
                 new MapPropertySource(
                         StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME,
-                        java.util.Map.of("DEMO_VALUE", "from-system-environment")
+                        java.util.Map.of(
+                                "DEMO_VALUE",
+                                "from-system-environment"
+                        )
                 )
         );
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
-        assertEquals("from-system-environment",
-                environment.getProperty("DEMO_VALUE"));
+        assertEquals(
+                "from-system-environment",
+                environment.getProperty("DEMO_VALUE")
+        );
     }
 
     @Test
@@ -149,11 +168,12 @@ class MicroEnvEnvironmentPostProcessorTest {
                 )
         );
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
-        assertEquals("from-micro-env",
-                environment.getProperty("DEMO_VALUE"));
+        assertEquals(
+                "from-micro-env",
+                environment.getProperty("DEMO_VALUE")
+        );
     }
 
     @Test
@@ -163,8 +183,7 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         assertNull(environment.getProperty("BROKEN"));
         assertFalse(hasMicroEnvPropertySource(environment));
@@ -176,8 +195,7 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         assertNull(environment.getProperty("DEMO_VALUE"));
         assertFalse(hasMicroEnvPropertySource(environment));
@@ -187,8 +205,7 @@ class MicroEnvEnvironmentPostProcessorTest {
     void doesNothingWhenManifestIsMissing() {
         StandardEnvironment environment = new StandardEnvironment();
 
-        withUserDir(tempDir, () ->
-                postProcessor.postProcessEnvironment(environment, null));
+        postProcessor.postProcessEnvironment(environment, null);
 
         assertNull(environment.getProperty("DEMO_VALUE"));
         assertFalse(hasMicroEnvPropertySource(environment));
@@ -212,20 +229,5 @@ class MicroEnvEnvironmentPostProcessorTest {
         Path path = tempDir.resolve(relativePath);
         Files.createDirectories(path.getParent());
         Files.writeString(path, content);
-    }
-
-    private void withUserDir(Path directory, Runnable action) {
-        String previous = System.getProperty("user.dir");
-        System.setProperty("user.dir", directory.toString());
-
-        try {
-            action.run();
-        } finally {
-            if (previous == null) {
-                System.clearProperty("user.dir");
-            } else {
-                System.setProperty("user.dir", previous);
-            }
-        }
     }
 }
