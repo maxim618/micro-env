@@ -65,7 +65,7 @@ class MicroEnvManifestReaderTest {
         );
 
         Optional<MicroEnvManifest> manifest =
-                reader.readManifestFrom(tempDir.resolve("application"));
+                reader.readDefaultManifest(null);
 
         assertTrue(manifest.isPresent());
         assertEquals(defaultManifest, manifest.get().path());
