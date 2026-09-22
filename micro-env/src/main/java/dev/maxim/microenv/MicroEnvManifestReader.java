@@ -15,9 +15,15 @@ public class MicroEnvManifestReader {
             System.getLogger(MicroEnvManifestReader.class.getName());
 
     public static final String DEFAULT_MANIFEST_NAME = "micro-env.list";
+    public static final String MANIFEST_PROPERTY = "micro.env.manifest";
 
     public Optional<MicroEnvManifest> readDefaultManifest(
             SpringApplication application) {
+
+        String configuredManifest = System.getProperty(MANIFEST_PROPERTY);
+        if (configuredManifest != null && !configuredManifest.isBlank()) {
+            return readManifestAt(Path.of(configuredManifest));
+        }
 
         Class<?> mainApplicationClass = application.getMainApplicationClass();
         if (mainApplicationClass == null) {
@@ -37,29 +43,44 @@ public class MicroEnvManifestReader {
             Path manifestPath = current.resolve(DEFAULT_MANIFEST_NAME);
 
             if (Files.isRegularFile(manifestPath)) {
-                try {
-                    String content = Files.readString(
-                            manifestPath,
-                            StandardCharsets.UTF_8
-                    );
-
-                    return Optional.of(new MicroEnvManifest(
-                            manifestPath,
-                            content
-                    ));
-                } catch (IOException e) {
-                    LOGGER.log(
-                            System.Logger.Level.WARNING,
-                            "Failed to read micro-env manifest: " + manifestPath,
-                            e
-                    );
-                    return Optional.empty();
-                }
+                return readManifestAt(manifestPath);
             }
 
             current = current.getParent();
         }
 
         return Optional.empty();
+    }
+
+    private Optional<MicroEnvManifest> readManifestAt(Path manifestPath) {
+        Path normalizedPath = manifestPath.toAbsolutePath().normalize();
+
+        if (!Files.isRegularFile(normalizedPath)) {
+            LOGGER.log(
+                    System.Logger.Level.WARNING,
+                    "Failed to read micro-env manifest: file does not exist: "
+                            + normalizedPath
+            );
+            return Optional.empty();
+        }
+
+        try {
+            String content = Files.readString(
+                    normalizedPath,
+                    StandardCharsets.UTF_8
+            );
+
+            return Optional.of(new MicroEnvManifest(
+                    normalizedPath,
+                    content
+            ));
+        } catch (IOException e) {
+            LOGGER.log(
+                    System.Logger.Level.WARNING,
+                    "Failed to read micro-env manifest: " + normalizedPath,
+                    e
+            );
+            return Optional.empty();
+        }
     }
 }
