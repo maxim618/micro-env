@@ -22,16 +22,35 @@ public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcesso
 
     private static final String PROPERTY_SOURCE_PREFIX = "micro-env:";
 
-    private final MicroEnvManifestReader manifestReader = new MicroEnvManifestReader();
-    private final MicroEnvManifestEntryReader entryReader = new MicroEnvManifestEntryReader();
-    private final MicroEnvConfigLoader configLoader = new MicroEnvConfigLoader();
+    private final MicroEnvManifestReader manifestReader;
+    private final MicroEnvManifestEntryReader entryReader;
+    private final MicroEnvConfigLoader configLoader;
+
+    public MicroEnvEnvironmentPostProcessor() {
+        this(
+                new MicroEnvManifestReader(),
+                new MicroEnvManifestEntryReader(),
+                new MicroEnvConfigLoader()
+        );
+    }
+
+    MicroEnvEnvironmentPostProcessor(
+            MicroEnvManifestReader manifestReader,
+            MicroEnvManifestEntryReader entryReader,
+            MicroEnvConfigLoader configLoader
+    ) {
+        this.manifestReader = manifestReader;
+        this.entryReader = entryReader;
+        this.configLoader = configLoader;
+    }
 
     @Override
     public void postProcessEnvironment(
             ConfigurableEnvironment environment,
             org.springframework.boot.SpringApplication application) {
 
-        Optional<MicroEnvManifest> manifest = manifestReader.readDefaultManifest();
+        Optional<MicroEnvManifest> manifest =
+                manifestReader.readDefaultManifest(application);
 
         if (manifest.isEmpty()) {
             return;
