@@ -22,7 +22,16 @@ public class MicroEnvManifestReader {
 
         String configuredManifest = System.getProperty(MANIFEST_PROPERTY);
         if (configuredManifest != null && !configuredManifest.isBlank()) {
-            return readManifestAt(Path.of(configuredManifest));
+            try {
+                return readManifestAt(Path.of(configuredManifest));
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(
+                        System.Logger.Level.WARNING,
+                        "Failed to read micro-env manifest: invalid path",
+                        e
+                );
+                return Optional.empty();
+            }
         }
 
         Class<?> mainApplicationClass = application.getMainApplicationClass();
@@ -58,7 +67,7 @@ public class MicroEnvManifestReader {
         if (!Files.isRegularFile(normalizedPath)) {
             LOGGER.log(
                     System.Logger.Level.WARNING,
-                    "Failed to read micro-env manifest: file does not exist: "
+                    "Failed to read micro-env manifest: path is not a regular file: "
                             + normalizedPath
             );
             return Optional.empty();
