@@ -1,5 +1,6 @@
 package dev.maxim.microenv;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -18,6 +19,72 @@ class MicroEnvManifestReaderTest {
 
     private final MicroEnvManifestReader reader =
             new MicroEnvManifestReader();
+
+    @AfterEach
+    void clearManifestProperty() {
+        System.clearProperty(MicroEnvManifestReader.MANIFEST_PROPERTY);
+    }
+
+    @Test
+    void readsExplicitManifestPath() throws IOException {
+        Path manifestPath = tempDir.resolve("custom").resolve("micro-env.custom");
+        Files.createDirectories(manifestPath.getParent());
+        Files.writeString(manifestPath, "secrets=.env");
+
+        System.setProperty(
+                MicroEnvManifestReader.MANIFEST_PROPERTY,
+                manifestPath.toString()
+        );
+
+        Optional<MicroEnvManifest> manifest =
+                reader.readDefaultManifest(null);
+
+        assertTrue(manifest.isPresent());
+        assertEquals(manifestPath, manifest.get().path());
+        assertEquals("secrets=.env", manifest.get().content());
+    }
+
+    @Test
+    void explicitManifestTakesPrecedenceOverDefaultDiscovery()
+            throws IOException {
+
+        Path defaultManifest =
+                tempDir.resolve("application").resolve("micro-env.list");
+        Path explicitManifest =
+                tempDir.resolve("custom").resolve("micro-env.custom");
+
+        Files.createDirectories(defaultManifest.getParent());
+        Files.createDirectories(explicitManifest.getParent());
+
+        Files.writeString(defaultManifest, "source=default");
+        Files.writeString(explicitManifest, "source=explicit");
+
+        System.setProperty(
+                MicroEnvManifestReader.MANIFEST_PROPERTY,
+                explicitManifest.toString()
+        );
+
+        Optional<MicroEnvManifest> manifest =
+                reader.readManifestFrom(tempDir.resolve("application"));
+
+        assertTrue(manifest.isPresent());
+        assertEquals(defaultManifest, manifest.get().path());
+    }
+
+    @Test
+    void returnsEmptyWhenExplicitManifestDoesNotExist() {
+        Path manifestPath = tempDir.resolve("missing").resolve("micro-env.list");
+
+        System.setProperty(
+                MicroEnvManifestReader.MANIFEST_PROPERTY,
+                manifestPath.toString()
+        );
+
+        Optional<MicroEnvManifest> manifest =
+                reader.readDefaultManifest(null);
+
+        assertTrue(manifest.isEmpty());
+    }
 
     @Test
     void findsManifestInApplicationDirectory() throws IOException {
