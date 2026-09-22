@@ -68,7 +68,8 @@ class MicroEnvManifestReaderTest {
                 reader.readDefaultManifest(null);
 
         assertTrue(manifest.isPresent());
-        assertEquals(defaultManifest, manifest.get().path());
+        assertEquals(explicitManifest, manifest.get().path());
+        assertEquals("source=explicit", manifest.get().content());
     }
 
     @Test
