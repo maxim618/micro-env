@@ -1,22 +1,35 @@
 package dev.maxim.demo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EnvironmentCheck implements CommandLineRunner {
 
-    private final Environment environment;
+    private final String demoValue;
+    private final DemoProperties properties;
 
-    public EnvironmentCheck(Environment environment) {
-        this.environment = environment;
+    public EnvironmentCheck(
+            @Value("${DEMO_VALUE}") String demoValue,
+            DemoProperties properties) {
+        this.demoValue = demoValue;
+        this.properties = properties;
     }
 
     @Override
     public void run(String... args) {
-        String value = environment.getProperty("micro-env.poc");
+        System.out.println("=== PROPERTY DIAGNOSTICS ===");
 
-        System.out.println("micro-env.poc = " + value);
+        System.out.println("DEMO_VALUE via @Value = " + demoValue);
+
+        System.out.println("@ConfigurationProperties demo.port = "
+                + properties.getPort());
+
+        System.out.println("@ConfigurationProperties demo.enabled = "
+                + properties.isEnabled());
+
+        System.out.println("=== END PROPERTY DIAGNOSTICS ===");
+
     }
 }
