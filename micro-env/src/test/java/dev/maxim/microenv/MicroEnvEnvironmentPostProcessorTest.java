@@ -9,12 +9,16 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
+
+
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -280,6 +284,28 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         assertEquals("8081", microEnvSource.getProperty("DEMO_PORT"));
         assertEquals("8081", microEnvSource.getProperty("demo.port"));
+    }
+
+    @Test
+    void systemEnvironmentOverridesMicroEnv() throws IOException {
+        writeManifest("secrets=.secret");
+        writeFile("secrets/.secret", """
+            DEMO_PORT=8081
+            """);
+
+        StandardEnvironment environment = new StandardEnvironment();
+
+        environment.getPropertySources().addFirst(
+                new SystemEnvironmentPropertySource(
+                        "test-system-environment",
+                        Map.of("DEMO_PORT", "9999")
+                )
+        );
+
+        postProcessor.postProcessEnvironment(environment, null);
+
+        assertEquals("9999", environment.getProperty("DEMO_PORT"));
+        assertEquals("9999", environment.getProperty("demo.port"));
     }
 
     private boolean hasMicroEnvPropertySource(
