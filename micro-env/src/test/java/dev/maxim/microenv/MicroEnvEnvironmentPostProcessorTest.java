@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,6 +55,55 @@ class MicroEnvEnvironmentPostProcessorTest {
         postProcessor.postProcessEnvironment(environment, null);
 
         assertEquals("from-file", environment.getProperty("DEMO_VALUE"));
+    }
+
+    @Test
+    void resolvesEnvironmentStyleKeysForSpringBinding() throws IOException {
+        writeManifest("secrets=.secret");
+        writeFile("secrets/.secret", """
+                DEMO_PORT=8081
+                DEMO_ENABLED=true
+                """);
+
+        StandardEnvironment environment = new StandardEnvironment();
+
+        postProcessor.postProcessEnvironment(environment, null);
+
+        PropertySource<?> microEnvSource = environment.getPropertySources()
+                .stream()
+                .filter(source -> source.getName().startsWith("micro-env:"))
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals("8081", microEnvSource.getProperty("demo.port"));
+        assertEquals("true", microEnvSource.getProperty("demo.enabled"));
+    }
+
+    @Test
+    void bindsEnvironmentStyleKeysThroughSpringBinder() throws IOException {
+        writeManifest("secrets=.secret");
+        writeFile("secrets/.secret", """
+            DEMO_PORT=8081
+            DEMO_ENABLED=true
+            """);
+
+        StandardEnvironment environment = new StandardEnvironment();
+
+        postProcessor.postProcessEnvironment(environment, null);
+
+        Binder binder = Binder.get(environment);
+
+        assertEquals(
+                8081,
+                binder.bind("demo.port", Bindable.of(Integer.class))
+                        .orElseThrow(() -> new IllegalStateException("demo.port is not bound"))
+        );
+
+        assertEquals(
+                true,
+                binder.bind("demo.enabled", Bindable.of(Boolean.class))
+                        .orElseThrow(() -> new IllegalStateException("demo.enabled is not bound"))
+        );
     }
 
     @Test
@@ -209,6 +260,26 @@ class MicroEnvEnvironmentPostProcessorTest {
 
         assertNull(environment.getProperty("DEMO_VALUE"));
         assertFalse(hasMicroEnvPropertySource(environment));
+    }
+    @Test
+    void preservesOriginalEnvironmentStyleKey() throws IOException {
+        writeManifest("secrets=.secret");
+        writeFile("secrets/.secret", """
+            DEMO_PORT=8081
+            """);
+
+        StandardEnvironment environment = new StandardEnvironment();
+
+        postProcessor.postProcessEnvironment(environment, null);
+
+        PropertySource<?> microEnvSource = environment.getPropertySources()
+                .stream()
+                .filter(source -> source.getName().startsWith("micro-env:"))
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals("8081", microEnvSource.getProperty("DEMO_PORT"));
+        assertEquals("8081", microEnvSource.getProperty("demo.port"));
     }
 
     private boolean hasMicroEnvPropertySource(

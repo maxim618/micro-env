@@ -2,7 +2,6 @@ package dev.maxim.microenv;
 
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
@@ -84,7 +83,7 @@ public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcesso
             }
 
             propertySources.add(
-                    new MapPropertySource(
+                    new MicroEnvPropertySource(
                             PROPERTY_SOURCE_PREFIX + config.path(),
                             properties
                     )
