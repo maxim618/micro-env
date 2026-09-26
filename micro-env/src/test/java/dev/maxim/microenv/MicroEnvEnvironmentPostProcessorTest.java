@@ -308,6 +308,30 @@ class MicroEnvEnvironmentPostProcessorTest {
         assertEquals("9999", environment.getProperty("demo.port"));
     }
 
+
+    @Test
+    void lowerManifestEntryOverridesHigherManifestEntry() throws IOException {
+        writeManifest("""
+            first=.env
+            second=.env
+            """);
+
+        writeFile("first/.env", """
+            API_URL=http://first
+            """);
+
+        writeFile("second/.env", """
+            API_URL=http://second
+            """);
+
+        StandardEnvironment environment = new StandardEnvironment();
+
+        postProcessor.postProcessEnvironment(environment, null);
+
+        assertEquals("http://second", environment.getProperty("API_URL"));
+        assertEquals("http://second", environment.getProperty("api.url"));
+    }
+
     private boolean hasMicroEnvPropertySource(
             StandardEnvironment environment) {
 
