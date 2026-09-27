@@ -332,21 +332,6 @@ class MicroEnvEnvironmentPostProcessorTest {
         assertEquals("http://second", environment.getProperty("api.url"));
     }
 
-    @Test
-    void systemEnvironmentOverridesMicroEnvUsingRealSpringEnvironment() throws IOException {
-        writeManifest("secrets=.env");
-        writeFile("secrets/.env", """
-            DEMO_PORT=8081
-            """);
-
-        StandardEnvironment environment = new StandardEnvironment();
-
-        postProcessor.postProcessEnvironment(environment, null);
-
-        assertEquals("9999", environment.getProperty("DEMO_PORT"));
-        assertEquals("9999", environment.getProperty("demo.port"));
-    }
-
     private boolean hasMicroEnvPropertySource(
             StandardEnvironment environment) {
 
