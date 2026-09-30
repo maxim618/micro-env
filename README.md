@@ -31,6 +31,8 @@ secrets/database=.env
 
 Then create the referenced files with `KEY=VALUE` entries. No explicit initialization code is required in the application; `micro-env` integrates with Spring Boot automatically.
 
+`micro-env` is required at runtime and remains on the application's classpath. Configuration files containing secrets stay outside the application JAR.
+
 ## Features
 
 * Multiple local configuration files
