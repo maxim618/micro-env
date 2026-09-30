@@ -8,6 +8,29 @@
 
 It is intended for local development when secrets such as API keys or passwords should stay outside Git without requiring OS environment variables or application-specific initialization code.
 
+## Installation
+
+Add `micro-env` as a Maven dependency:
+
+```xml
+<dependency>
+    <groupId>io.github.maxim618</groupId>
+    <artifactId>micro-env</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+The version above is the current development version. For a released version, use the corresponding release version.
+
+Create a `micro-env.list` file in the application working directory and configure the local configuration sources. For example:
+
+```text
+secrets/openrouter=.env
+secrets/database=.env
+```
+
+Then create the referenced files with `KEY=VALUE` entries. No explicit initialization code is required in the application; `micro-env` integrates with Spring Boot automatically.
+
 ## Features
 
 * Multiple local configuration files
