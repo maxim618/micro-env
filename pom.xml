@@ -6,17 +6,42 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.maxim</groupId>
-    <artifactId>micro-env-poc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>io.github.maxim618</groupId>
+    <artifactId>micro-env-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>micro-env-poc</name>
+    <name>micro-env</name>
+    <description>Lightweight environment configuration library for Spring Boot applications</description>
+    <url>https://github.com/maxim618/micro-env</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Maxim Butmanov</name>
+            <url>https://github.com/maxim618</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/maxim618/micro-env.git</connection>
+        <developerConnection>scm:git:https://github.com/maxim618/micro-env.git</developerConnection>
+        <url>https://github.com/maxim618/micro-env</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>micro-env</module>
         <module>demo-app</module>
     </modules>
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
