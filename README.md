@@ -2,6 +2,7 @@
 
 ![Java 21](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?logo=springboot&logoColor=white)
+[![CI](https://github.com/maxim618/micro-env/actions/workflows/ci.yml/badge.svg)](https://github.com/maxim618/micro-env/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 `micro-env` is a small Spring Boot library for loading local configuration values from explicitly configured files into the Spring `Environment`.
