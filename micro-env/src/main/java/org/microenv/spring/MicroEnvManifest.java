@@ -19,5 +19,11 @@ package org.microenv.spring;
 
 import java.nio.file.Path;
 
+/**
+ * Manifest file and its raw UTF-8 content.
+ *
+ * @param path path of the manifest file
+ * @param content manifest content
+ */
 public record MicroEnvManifest(Path path, String content) {
 }
