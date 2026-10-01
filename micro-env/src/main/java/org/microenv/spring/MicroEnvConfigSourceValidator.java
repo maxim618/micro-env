@@ -22,8 +22,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Validates the configuration file sources before they are loaded.
+ */
 public class MicroEnvConfigSourceValidator {
 
+    /**
+     * Verifies that each configuration source occurs only once.
+     *
+     * @param paths configuration file paths to validate
+     * @throws IllegalArgumentException if the same path occurs more than once
+     */
     public void validate(List<Path> paths) {
         Set<Path> seen = new HashSet<>();
 
