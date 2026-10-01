@@ -21,8 +21,21 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Resolves manifest entries into configuration file paths.
+ *
+ * <p>Relative paths are resolved from the directory containing the manifest.</p>
+ */
 public class MicroEnvManifestEntryReader {
 
+    /**
+     * Resolves all non-empty, non-comment manifest entries.
+     *
+     * @param manifest manifest to resolve
+     * @return configuration file paths in manifest order
+     * @throws IllegalArgumentException if a manifest entry is malformed or uses
+     *         an invalid path or file name
+     */
     public List<Path> resolveEntries(MicroEnvManifest manifest) {
         Path manifestDirectory = manifest.path().getParent();
         List<Path> paths = new ArrayList<>();
@@ -51,7 +64,7 @@ public class MicroEnvManifestEntryReader {
 
             if (directoryPath.isAbsolute()
                     || fileNamePath.getNameCount() != 1
-                    || fileName.contains("/") 
+                    || fileName.contains("/")
                     || fileName.contains("\\")) {
                 throw new IllegalArgumentException("Invalid manifest entry: " + line);
             }
