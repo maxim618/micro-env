@@ -17,5 +17,11 @@
 
 package org.microenv.spring;
 
+/**
+ * A single key-value entry parsed from a micro-env configuration file.
+ *
+ * @param key configuration key
+ * @param value configuration value
+ */
 public record MicroEnvConfigEntry(String key, String value) {
 }

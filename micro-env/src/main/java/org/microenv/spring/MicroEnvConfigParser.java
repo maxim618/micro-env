@@ -22,8 +22,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Parses micro-env configuration text into key-value entries.
+ *
+ * <p>Each non-empty, non-comment line must contain a key and a non-empty value
+ * separated by {@code =}. Duplicate keys within one file are rejected.</p>
+ */
 public class MicroEnvConfigParser {
 
+    /**
+     * Parses configuration text.
+     *
+     * @param content configuration text
+     * @return parsed configuration entries in source order
+     * @throws IllegalArgumentException if an entry is malformed, has an empty key
+     *         or value, or duplicates a key from an earlier entry
+     */
     public List<MicroEnvConfigEntry> parse(String content) {
         List<MicroEnvConfigEntry> entries = new ArrayList<>();
         Set<String> keys = new HashSet<>();

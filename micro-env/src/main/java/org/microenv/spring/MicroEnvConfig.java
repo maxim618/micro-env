@@ -20,6 +20,12 @@ package org.microenv.spring;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Parsed configuration loaded from one micro-env configuration file.
+ *
+ * @param path path of the configuration file
+ * @param entries configuration entries parsed from the file
+ */
 public record MicroEnvConfig(Path path, List<MicroEnvConfigEntry> entries) {
 
     public MicroEnvConfig {

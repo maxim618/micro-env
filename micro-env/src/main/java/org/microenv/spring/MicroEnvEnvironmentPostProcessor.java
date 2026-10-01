@@ -31,6 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Integrates micro-env configuration files with the Spring Boot environment.
+ *
+ * <p>When a manifest is available, the processor loads its configuration files
+ * and adds their properties to the Spring {@link ConfigurableEnvironment}.
+ * It does not modify the process environment returned by {@code System.getenv()}.</p>
+ */
 public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     private static final System.Logger LOGGER =
@@ -42,6 +49,9 @@ public class MicroEnvEnvironmentPostProcessor implements EnvironmentPostProcesso
     private final MicroEnvManifestEntryReader entryReader;
     private final MicroEnvConfigLoader configLoader;
 
+    /**
+     * Creates a post-processor using the default manifest and configuration loaders.
+     */
     public MicroEnvEnvironmentPostProcessor() {
         this(
                 new MicroEnvManifestReader(),

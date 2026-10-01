@@ -19,5 +19,11 @@ package org.microenv.spring;
 
 import java.nio.file.Path;
 
+/**
+ * Raw content read from one micro-env configuration file.
+ *
+ * @param path path of the configuration file
+ * @param content file content as UTF-8 text
+ */
 public record MicroEnvConfigFile(Path path, String content) {
 }
