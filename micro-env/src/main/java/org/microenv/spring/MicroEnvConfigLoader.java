@@ -22,12 +22,18 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Validates, reads, and parses micro-env configuration sources.
+ */
 public class MicroEnvConfigLoader {
 
     private final MicroEnvConfigSourceValidator sourceValidator;
     private final MicroEnvConfigFileReader fileReader;
     private final MicroEnvConfigParser parser;
 
+    /**
+     * Creates a loader with the default validation, file-reading, and parsing components.
+     */
     public MicroEnvConfigLoader() {
         this(
                 new MicroEnvConfigSourceValidator(),
@@ -46,6 +52,15 @@ public class MicroEnvConfigLoader {
         this.parser = parser;
     }
 
+    /**
+     * Loads and parses the supplied configuration files.
+     *
+     * @param paths configuration file paths in manifest order
+     * @return parsed configurations in the same order as the supplied paths
+     * @throws IOException if a configuration file cannot be read
+     * @throws IllegalArgumentException if duplicate configuration sources are supplied
+     *         or a configuration entry is invalid
+     */
     public List<MicroEnvConfig> load(List<Path> paths) throws IOException {
         sourceValidator.validate(paths);
 
