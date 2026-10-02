@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Validates, reads, and parses micro-env configuration sources.
  */
-public class MicroEnvConfigLoader {
+class MicroEnvConfigLoader {
 
     private final MicroEnvConfigSourceValidator sourceValidator;
     private final MicroEnvConfigFileReader fileReader;
@@ -34,7 +34,7 @@ public class MicroEnvConfigLoader {
     /**
      * Creates a loader with the default validation, file-reading, and parsing components.
      */
-    public MicroEnvConfigLoader() {
+    MicroEnvConfigLoader() {
         this(
                 new MicroEnvConfigSourceValidator(),
                 new MicroEnvConfigFileReader(),
@@ -61,7 +61,7 @@ public class MicroEnvConfigLoader {
      * @throws IllegalArgumentException if duplicate configuration sources are supplied
      *         or a configuration entry is invalid
      */
-    public List<MicroEnvConfig> load(List<Path> paths) throws IOException {
+    List<MicroEnvConfig> load(List<Path> paths) throws IOException {
         sourceValidator.validate(paths);
 
         List<MicroEnvConfigFile> files = new ArrayList<>(paths.size());

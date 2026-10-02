@@ -26,7 +26,7 @@ import java.util.List;
  * @param path path of the configuration file
  * @param entries configuration entries parsed from the file
  */
-public record MicroEnvConfig(Path path, List<MicroEnvConfigEntry> entries) {
+record MicroEnvConfig(Path path, List<MicroEnvConfigEntry> entries) {
 
     public MicroEnvConfig {
         entries = List.copyOf(entries);

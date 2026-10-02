@@ -25,5 +25,5 @@ import java.nio.file.Path;
  * @param path path of the manifest file
  * @param content manifest content
  */
-public record MicroEnvManifest(Path path, String content) {
+record MicroEnvManifest(Path path, String content) {
 }

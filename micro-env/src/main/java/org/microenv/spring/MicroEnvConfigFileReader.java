@@ -25,7 +25,7 @@ import java.nio.file.Path;
 /**
  * Reads micro-env configuration files as UTF-8 text.
  */
-public class MicroEnvConfigFileReader {
+class MicroEnvConfigFileReader {
 
     /**
      * Reads a configuration file.
@@ -34,7 +34,7 @@ public class MicroEnvConfigFileReader {
      * @return the file path and its UTF-8 content
      * @throws IOException if the file cannot be read
      */
-    public MicroEnvConfigFile read(Path path) throws IOException {
+    MicroEnvConfigFile read(Path path) throws IOException {
         String content = Files.readString(path, StandardCharsets.UTF_8);
         return new MicroEnvConfigFile(path, content);
     }
