@@ -14,8 +14,35 @@
 
     <artifactId>micro-env</artifactId>
 
+    <name>micro-env</name>
+    <description>Lightweight environment configuration library for Spring Boot applications</description>
+    <url>https://github.com/maxim618/micro-env</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Maxim Butmanov</name>
+            <url>https://github.com/maxim618</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/maxim618/micro-env.git</connection>
+        <developerConnection>scm:git:https://github.com/maxim618/micro-env.git</developerConnection>
+        <url>https://github.com/maxim618/micro-env</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <spring-boot.version>4.1.0</spring-boot.version>
+        <flatten.skip>false</flatten.skip>
     </properties>
 
     <dependencies>
