@@ -26,7 +26,7 @@ import java.util.List;
  *
  * <p>Relative paths are resolved from the directory containing the manifest.</p>
  */
-public class MicroEnvManifestEntryReader {
+class MicroEnvManifestEntryReader {
 
     /**
      * Resolves all non-empty, non-comment manifest entries.
@@ -36,7 +36,7 @@ public class MicroEnvManifestEntryReader {
      * @throws IllegalArgumentException if a manifest entry is malformed or uses
      *         an invalid path or file name
      */
-    public List<Path> resolveEntries(MicroEnvManifest manifest) {
+    List<Path> resolveEntries(MicroEnvManifest manifest) {
         Path manifestDirectory = manifest.path().getParent();
         List<Path> paths = new ArrayList<>();
 
