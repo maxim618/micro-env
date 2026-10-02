@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Finds and reads the micro-env manifest used by the application.
  */
-public class MicroEnvManifestReader {
+class MicroEnvManifestReader {
 
     private static final System.Logger LOGGER =
             System.getLogger(MicroEnvManifestReader.class.getName());
@@ -37,12 +37,12 @@ public class MicroEnvManifestReader {
     /**
      * Default manifest file name.
      */
-    public static final String DEFAULT_MANIFEST_NAME = "micro-env.list";
+    static final String DEFAULT_MANIFEST_NAME = "micro-env.list";
 
     /**
      * System property used to specify an explicit manifest path.
      */
-    public static final String MANIFEST_PROPERTY = "micro.env.manifest";
+    static final String MANIFEST_PROPERTY = "micro.env.manifest";
 
     /**
      * Reads the configured manifest or searches for the default manifest.
@@ -54,7 +54,7 @@ public class MicroEnvManifestReader {
      * @param application Spring application used to determine the application location
      * @return the manifest when found and readable, otherwise an empty optional
      */
-    public Optional<MicroEnvManifest> readDefaultManifest(
+    Optional<MicroEnvManifest> readDefaultManifest(
             SpringApplication application) {
 
         String configuredManifest = System.getProperty(MANIFEST_PROPERTY);
