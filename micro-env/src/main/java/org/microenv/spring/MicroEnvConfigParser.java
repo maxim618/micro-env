@@ -28,7 +28,7 @@ import java.util.Set;
  * <p>Each non-empty, non-comment line must contain a key and a non-empty value
  * separated by {@code =}. Duplicate keys within one file are rejected.</p>
  */
-public class MicroEnvConfigParser {
+class MicroEnvConfigParser {
 
     /**
      * Parses configuration text.
@@ -38,7 +38,7 @@ public class MicroEnvConfigParser {
      * @throws IllegalArgumentException if an entry is malformed, has an empty key
      *         or value, or duplicates a key from an earlier entry
      */
-    public List<MicroEnvConfigEntry> parse(String content) {
+    List<MicroEnvConfigEntry> parse(String content) {
         List<MicroEnvConfigEntry> entries = new ArrayList<>();
         Set<String> keys = new HashSet<>();
 
