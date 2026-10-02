@@ -25,5 +25,5 @@ import java.nio.file.Path;
  * @param path path of the configuration file
  * @param content file content as UTF-8 text
  */
-public record MicroEnvConfigFile(Path path, String content) {
+record MicroEnvConfigFile(Path path, String content) {
 }
