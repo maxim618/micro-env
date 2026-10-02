@@ -23,5 +23,5 @@ package org.microenv.spring;
  * @param key configuration key
  * @param value configuration value
  */
-public record MicroEnvConfigEntry(String key, String value) {
+record MicroEnvConfigEntry(String key, String value) {
 }
