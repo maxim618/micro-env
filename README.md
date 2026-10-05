@@ -17,11 +17,9 @@ Add `micro-env` as a Maven dependency:
 <dependency>
     <groupId>io.github.maxim618</groupId>
     <artifactId>micro-env</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 </dependency>
 ```
-
-The version above is the current development version. For a released version, use the corresponding release version.
 
 Create a `micro-env.list` file in the application working directory and configure the local configuration sources. For example:
 
