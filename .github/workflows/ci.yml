@@ -57,16 +57,18 @@ jobs:
       - name: Sign artifacts
         run: mvn --batch-mode clean verify -Pgpg-signing
 
+      - name: Determine project version
+        run: |
+          VERSION=$(mvn --batch-mode help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "PROJECT_VERSION=$VERSION" >> "$GITHUB_ENV"
+
       - name: Verify signatures
         run: |
-          gpg --verify micro-env/target/micro-env-0.1.0-SNAPSHOT.jar.asc \
-                       micro-env/target/micro-env-0.1.0-SNAPSHOT.jar
-
-          gpg --verify micro-env/target/micro-env-0.1.0-SNAPSHOT-sources.jar.asc \
-                       micro-env/target/micro-env-0.1.0-SNAPSHOT-sources.jar
-
-          gpg --verify micro-env/target/micro-env-0.1.0-SNAPSHOT-javadoc.jar.asc \
-                       micro-env/target/micro-env-0.1.0-SNAPSHOT-javadoc.jar
-
-          gpg --verify micro-env/target/micro-env-0.1.0-SNAPSHOT.pom.asc \
-                       micro-env/target/micro-env-0.1.0-SNAPSHOT.pom
+          for artifact in \
+            "micro-env/target/micro-env-${PROJECT_VERSION}.jar" \
+            "micro-env/target/micro-env-${PROJECT_VERSION}-sources.jar" \
+            "micro-env/target/micro-env-${PROJECT_VERSION}-javadoc.jar" \
+            "micro-env/target/micro-env-${PROJECT_VERSION}.pom"
+          do
+            gpg --verify "${artifact}.asc" "$artifact"
+          done
