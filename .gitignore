@@ -3,3 +3,8 @@ target/
 
 .env
 .env.*
+*.secret
+
+.flattened-pom.xml
+effective-pom
+*.log
