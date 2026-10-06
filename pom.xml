@@ -12,6 +12,17 @@
     <version>0.1.0</version>
     <packaging>pom</packaging>
 
+    <name>micro-env-parent</name>
+    <description>Parent Maven project for the micro-env library</description>
+    <url>https://github.com/maxim618/micro-env</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/maxim618/micro-env.git</connection>
+        <developerConnection>scm:git:https://github.com/maxim618/micro-env.git</developerConnection>
+        <url>https://github.com/maxim618/micro-env</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <licenses>
         <license>
             <name>Apache-2.0</name>
@@ -170,5 +181,35 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>gpg-signing</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+
+                        <configuration>
+                            <bestPractices>true</bestPractices>
+                            <useAgent>true</useAgent>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
